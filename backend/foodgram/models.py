@@ -7,7 +7,7 @@ User = get_user_model()
 class Ingridient(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, verbose_name='Название ингридиента')
-    measurement_unit = models.CharField(max_lengt=200)
+    measurement_unit = models.CharField(max_length=200)
 
 
 class Tag(models.Model):
@@ -26,11 +26,11 @@ class Recipe(models.Model):
     cooking_time = models.IntegerField()
 
 
-class Favorites(models.Model):
+class Favorite(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Cart(models.Model):
-    recipe = models.ForeignKey(Recipe)
-    user = models.ForeignKey(User)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
