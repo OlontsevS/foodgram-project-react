@@ -14,7 +14,7 @@ SECRET_KEY = '4r^48**z=k)@ud2irx0lsk^@wapkxafbh(0l9*!s48l#x#_3iq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -76,6 +76,7 @@ AUTH_USER_MODEL = 'users.CustomUserModel'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -92,7 +93,9 @@ SIMPLE_JWT = {
 DJOSER = {
     'SERIALIZERS': {
          'user_create': 'api.serializers.UserCreateSerializer'
-    }
+    },
+    'HIDE_USERS': False,
+    'LOGIN_FIELD': 'email',
 }
 
 # Database
