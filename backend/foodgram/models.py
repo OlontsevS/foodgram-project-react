@@ -5,7 +5,6 @@ User = get_user_model()
 
 
 class Ingridient(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, verbose_name='Название ингридиента')
     measurement_unit = models.CharField(max_length=200)
 
@@ -17,20 +16,47 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
     name = models.CharField(max_length=200)
     image = models.ImageField('Label')
-    description = models.TextField()
-    ingridients = models.ManyToManyField(Ingridient)
-    tags = models.ManyToManyField(Tag)
+    text = models.TextField()
+    ingridients = models.ManyToManyField(Ingridient, db_index=True)
+    tags = models.ManyToManyField(Tag, db_index=True)
     cooking_time = models.IntegerField()
 
 
 class Favorite(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
 
 
 class Cart(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+
+class Follow(models.Model):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following',
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+    )

@@ -1,16 +1,19 @@
 from django.contrib.auth import get_user_model
 import djoser.views
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+                                        IsAuthenticatedOrReadOnly, AllowAny)
+from rest_framework.decorators import action
 from foodgram.models import Ingridient, Tag, Recipe, Favorite, Cart
 from .serializers import (FavoriteSerializer,
                           IngridientSerializer,
                           TagSerializer,
                           RecipeSerializer,
                           CartSerializer,
-                          UserCreateSerializer,)
+                          UserCreateSerializer,
+                          UserGetSerializer)
 from .paginations import CustomPagination
 
 
@@ -27,7 +30,7 @@ class CustomUserViewSet(djoser.views.UserViewSet):
             return 0
         if self.action == 'create':
             return UserCreateSerializer
-        return 0
+        return UserGetSerializer
 
     def get_permissions(self):
         if self.action == 'me':
@@ -38,28 +41,71 @@ class CustomUserViewSet(djoser.views.UserViewSet):
 class IngridientViewSet(viewsets.ModelViewSet):
     queryset = Ingridient.objects.all()
     serializer_class = IngridientSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = (AllowAny,)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    pagination_class = CustomPagination
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    permission_classes = (AllowAny,)
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated, ]
+    )
+    def favorite(self, request, pk):
+        recipe = get_object_or_404(Recipe, id=pk)
+        if request.method == 'POST':
+            serializer = FavoriteSerializer(
+                data={'user': request.user.id, 'recipe': recipe.id, },
+                context={'request': request}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if request.method == 'DELETE':
+            error_message = 'У вас нет этого рецепта в избранном'
+            if not Favorite.objects.filter(user=request.user, recipe=recipe).exists():
+                return Response({'errors': error_message},
+                                status=status.HTTP_400_BAD_REQUEST)
+            Favorite.objects.filter(user=request.user, recipe=recipe).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
+    pagination_class = CustomPagination
 
     def get_queryset(self):
-        recipe_id = self.kwargs.get('recipe_id')
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        return recipe.favorites.all()
+        user = self.request.user.id
+        return Favorite.objects.filter(user=user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['recipe_id'] = self.kwargs.get('recipe_id')
+        return context
+
+    def perform_create(self, serializer):
+        serializer.save(
+            user=self.request.user,
+            favorite_recipe=get_object_or_404(
+                Recipe,
+                id=self.kwargs.get('recipe_id')
+            )
+        )
 
 
 class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+    permission_classes = (IsAuthenticated,)
