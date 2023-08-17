@@ -2,14 +2,16 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
 import djoser.views
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly, AllowAny)
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly,
+                                        AllowAny)
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-from foodgram.models import Ingredient, Tag, Recipe, Favorite, Cart, RecipeIngredient
+from foodgram.models import (Ingredient, Tag, Recipe,
+                             Favorite, Cart, RecipeIngredient)
 from users.models import Follow
 from .filters import RecipeFilter
 from .serializers import (FavoriteSerializer,
@@ -117,7 +119,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeSerializer
         return RecipeCreateSerializer
 
-
     @action(
         detail=True,
         methods=('post', 'delete'),
@@ -126,8 +127,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='favorite',
     )
     def favorite(self, request, pk):
-        """Метод для управления избранными подписками """
-
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
@@ -159,8 +158,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='shopping_cart',
     )
     def shopping_cart(self, request, pk):
-        """Метод для управления списком покупок"""
-
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
 

@@ -7,7 +7,13 @@ from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from django.db import transaction
 
-from foodgram.models import Ingredient, Tag, Recipe, Favorite, Cart, RecipeIngredient
+from foodgram.models import (Ingredient,
+                             Tag,
+                             Recipe,
+                             Favorite,
+                             Cart,
+                             RecipeIngredient
+                             )
 from users.models import Follow
 
 User = get_user_model()
@@ -42,7 +48,6 @@ class UserCreateSerializer(UserCreateSerializer):
 
 
 class SetPasswordSerializer(serializers.Serializer):
-    """[POST] Изменение пароля пользователя."""
     current_password = serializers.CharField()
     new_password = serializers.CharField()
 
@@ -150,7 +155,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    """Список ингредиентов с количеством для рецепта."""
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -163,7 +167,6 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
-    """Ингредиент и количество для создания рецепта."""
     id = serializers.IntegerField()
 
     class Meta:
@@ -173,7 +176,10 @@ class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
-    ingredients = RecipeIngredientSerializer(many=True, read_only=True, source='recipes')
+    ingredients = RecipeIngredientSerializer(many=True,
+                                             read_only=True,
+                                             source='recipes'
+                                             )
     image = Base64ImageField()
     author = UserGetSerializer(read_only=True)
     is_favorited = serializers.SerializerMethodField()
@@ -181,7 +187,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart',
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
 
     def get_is_favorited(self, obj):
@@ -284,7 +291,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return RecipeSerializer(instance,
-                                    context=self.context).data
+                                context=self.context).data
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
