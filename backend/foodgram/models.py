@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.validators import (MinValueValidator,)
 
 User = get_user_model()
 
 
-class Ingridient(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название ингридиента')
     measurement_unit = models.CharField(max_length=200)
 
@@ -20,9 +21,33 @@ class Recipe(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField('Label')
     text = models.TextField()
-    ingridients = models.ManyToManyField(Ingridient, db_index=True)
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='RecipeIngredient',
+        through_fields=('recipe', 'ingredient'),
+        verbose_name='Ингредиенты'
+    )
     tags = models.ManyToManyField(Tag, db_index=True)
     cooking_time = models.IntegerField()
+
+
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipes',
+        verbose_name='Рецепт'
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredients',
+        verbose_name='Ингредиент'
+    )
+    amount = models.IntegerField(
+        'Количество',
+        validators=[MinValueValidator(1)]
+    )
 
 
 class Favorite(models.Model):
@@ -41,22 +66,11 @@ class Favorite(models.Model):
 class Cart(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-
-class Follow(models.Model):
-    author = models.ForeignKey(
-        User,
         on_delete=models.CASCADE,
-        related_name='following',
+        related_name='shopping_cart'
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='follower',
+        related_name='shopping_cart'
     )
