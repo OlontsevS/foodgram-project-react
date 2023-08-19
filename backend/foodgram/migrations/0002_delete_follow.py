@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('foodgram', '0001_initial'),
+        ("foodgram", "0001_initial"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Follow',
+            name="Follow",
         ),
     ]
