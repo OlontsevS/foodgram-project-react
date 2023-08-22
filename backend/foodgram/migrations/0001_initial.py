@@ -48,7 +48,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("name", models.CharField(max_length=200)),
-                ("image", models.ImageField(upload_to="", verbose_name="Label")),
+                ("image", models.ImageField(upload_to="",
+                                            verbose_name="Label")),
                 ("text", models.TextField()),
                 ("cooking_time", models.IntegerField()),
                 (
@@ -93,7 +94,8 @@ class Migration(migrations.Migration):
                 (
                     "amount",
                     models.IntegerField(
-                        validators=[django.core.validators.MinValueValidator(1)],
+                        validators=[django.core.
+                                    validators.MinValueValidator(1)],
                         verbose_name="Количество",
                     ),
                 ),
