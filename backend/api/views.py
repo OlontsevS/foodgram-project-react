@@ -1,35 +1,26 @@
+import djoser.views
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
-import djoser.views
-from rest_framework import viewsets, status
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-    AllowAny,
-)
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from foodgram.models import Ingredient, Tag, Recipe, Favorite, Cart, RecipeIngredient
-from users.models import Follow
-from .filters import RecipeFilter
-from .serializers import (
-    FavoriteSerializer,
-    IngredientSerializer,
-    TagSerializer,
-    RecipeSerializer,
-    RecipeCreateSerializer,
-    CartSerializer,
-    UserCreateSerializer,
-    UserGetSerializer,
-    FollowSerializer,
-    SubscribeSerializer,
-    SetPasswordSerializer,
-)
-from .paginations import CustomPagination
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
 
+from foodgram.models import (Cart, Favorite, Ingredient, Recipe,
+                             RecipeIngredient, Tag)
+from users.models import Follow
+
+from .filters import RecipeFilter
+from .paginations import CustomPagination
+from .serializers import (CartSerializer, FavoriteSerializer, FollowSerializer,
+                          IngredientSerializer, RecipeCreateSerializer,
+                          RecipeSerializer, SetPasswordSerializer,
+                          SubscribeSerializer, TagSerializer,
+                          UserCreateSerializer, UserGetSerializer)
 
 User = get_user_model()
 
@@ -61,11 +52,15 @@ class CustomUserViewSet(djoser.views.UserViewSet):
     def subscribe(self, request, id):
         user = request.user
         author = get_object_or_404(User, id=id)
-        serializer = FollowSerializer(data={"user": user.id, "author": author.id})
+        serializer = FollowSerializer(
+            data={"user": user.id, "author": author.id}
+        )
         if request.method == "POST":
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            serializer = SubscribeSerializer(author, context={"request": request})
+            serializer = SubscribeSerializer(
+                author, context={"request": request}
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         follow = Follow.objects.filter(user=user, author=author)
         if not follow.exists():
@@ -87,7 +82,10 @@ class CustomUserViewSet(djoser.views.UserViewSet):
         user = request.user
         queryset = User.objects.filter(following__user=user)
         pages = self.paginate_queryset(queryset)
-        serializer = SubscribeSerializer(pages, many=True, context={"request": request})
+        serializer = SubscribeSerializer(
+            pages,
+            many=True, context={"request": request}
+        )
         return self.get_paginated_response(serializer.data)
 
 
@@ -129,7 +127,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if Favorite.objects.filter(user=user, recipe=recipe).exists():
                 return Response(
                     {
-                        "errors": f'Повторно - "{recipe.name}" добавить нельзя,'
+                        "errors": f'Повторно'
+                                  f' - "{recipe.name}" добавить нельзя,'
                         f"он уже есть в избранном у пользователя"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
@@ -163,7 +162,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if Cart.objects.filter(user=user, recipe=recipe).exists():
                 return Response(
                     {
-                        "errors": f'Повторно - "{recipe.name}" добавить нельзя,'
+                        "errors": f'Повторно'
+                                  f' - "{recipe.name}" добавить нельзя,'
                         f"он уже есть в списке покупок"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
@@ -185,13 +185,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @action(detail=False, methods=["get"], permission_classes=(IsAuthenticated,))
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=(IsAuthenticated,)
+    )
     def download_shopping_cart(self, request, **kwargs):
         ingredients = (
             RecipeIngredient.objects.values("ingredient")
             .annotate(total_amount=Sum("amount"))
             .values_list(
-                "ingredient__name", "total_amount", "ingredient__measurement_unit"
+                "ingredient__name",
+                "total_amount",
+                "ingredient__measurement_unit"
             )
         )
 
@@ -201,7 +207,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             for ingredient in ingredients
         ]
         file = HttpResponse(
-            "Cписок покупок:\n" + "\n".join(file_list), content_type="text/plain"
+            "Cписок покупок:\n" + "\n".join(file_list),
+            content_type="text/plain"
         )
         file["Content-Disposition"] = "attachment; filename=shopping_cart.txt"
         return file
@@ -224,7 +231,10 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(
             user=self.request.user,
-            favorite_recipe=get_object_or_404(Recipe, id=self.kwargs.get("recipe_id")),
+            favorite_recipe=get_object_or_404(
+                Recipe,
+                id=self.kwargs.get("recipe_id")
+            ),
         )
 
 
@@ -245,5 +255,8 @@ class CartViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(
             user=self.request.user,
-            shopping_cart=get_object_or_404(Recipe, id=self.kwargs.get("recipe_id")),
+            shopping_cart=get_object_or_404(
+                Recipe,
+                id=self.kwargs.get("recipe_id")
+            ),
         )
