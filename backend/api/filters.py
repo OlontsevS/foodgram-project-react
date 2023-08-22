@@ -1,6 +1,7 @@
 from distutils.util import strtobool
 
 from django_filters import rest_framework
+
 from foodgram.models import Cart, Favorite, Recipe, Tag
 
 CHOICES_LIST = (("0", "False"), ("1", "True"))
