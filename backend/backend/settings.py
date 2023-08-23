@@ -7,7 +7,7 @@ SECRET_KEY = "4r^48**z=k)@ud2irx0lsk^@wapkxafbh(0l9*!s48l#x#_3iq"
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ['maintenance17.ddns.net', '158.160.24.191', 'localhost', '127.0.0.1']
 
 
 INSTALLED_APPS = [
@@ -37,10 +37,19 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 CORS_URLS_REGEX = r"^/api/.*$"
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ROOT_URLCONF = "backend.urls"
 
@@ -80,13 +89,17 @@ DJOSER = {
     "LOGIN_FIELD": "email",
 }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
-}
 
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
+       'USER': os.getenv('POSTGRES_USER', 'foodgram_user'),
+       'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'foodgram_password'),
+       'HOST': os.getenv('DB_HOST', 'db'),
+       'PORT': os.getenv('DB_PORT', 5432)
+   }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -117,5 +130,3 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-STATIC_URL = "/static/"
