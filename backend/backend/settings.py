@@ -7,7 +7,8 @@ SECRET_KEY = "4r^48**z=k)@ud2irx0lsk^@wapkxafbh(0l9*!s48l#x#_3iq"
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['maintenance17.ddns.net', '158.160.24.191', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['maintenance17.ddns.net',
+                 '158.160.24.191', 'localhost', '127.0.0.1']
 
 
 INSTALLED_APPS = [
