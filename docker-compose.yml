@@ -1,7 +1,6 @@
 version: '3'
 
 volumes:
-  frontend_value:
   pg_data:
   static:
   media:
@@ -18,8 +17,6 @@ services:
     volumes:
       - static:/static
       - media:/app/media/
-    depends_on:
-      - db
     env_file: .env
 
   frontend:
@@ -32,6 +29,7 @@ services:
   gateway:
     image: maintenance17/foodgram_gateway
     env_file: .env
+    restart: always
     ports:
       - 8000:80
     volumes:
