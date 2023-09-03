@@ -27,7 +27,7 @@ User = get_user_model()
 class CustomUserViewSet(djoser.views.UserViewSet):
     pagination_class = CustomPagination
     queryset = User.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (AllowAny,)
 
     def get_serializer_class(self):
         if self.action == "set_password":
