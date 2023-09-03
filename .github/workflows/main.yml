@@ -65,6 +65,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./backend/
+          # Параметр push: true указывает, что образ нужно не только собрать,
+          # но и отправить на Docker Hub
           push: true
           tags: maintenance17/foodgram_backend:latest
 
@@ -104,7 +106,7 @@ jobs:
       - name: Push to DockerHub
         uses: docker/build-push-action@v4
         with:
-          context: ./infra/
+          context: ./nginx/
           push: true
           tags: maintenance17/foodgram_gateway:latest
 

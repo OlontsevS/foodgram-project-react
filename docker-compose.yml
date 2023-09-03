@@ -29,9 +29,8 @@ services:
   gateway:
     image: maintenance17/foodgram_gateway
     env_file: .env
-    restart: always
     ports:
-      - 8000:80
+      - 9000:80
     volumes:
       - static:/static
       - media:/app/media/
