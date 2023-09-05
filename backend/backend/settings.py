@@ -10,7 +10,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['maintenance17.ddns.net',
                  '158.160.24.191', 'localhost', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://*.maintenance17.ddns.net', 'https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['maintenance17.ddns.net', '158.160.24.191', '127.0.0.1']
 CSRF_COOKIE_SECURE = False
 
 
