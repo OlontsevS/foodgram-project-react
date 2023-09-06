@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         import csv
-        with open("data/ingredients.csv", encoding='utf8') as f:
+        with open("/home/yc-user/foodgram/data/ingredients.csv", encoding='utf8') as f:
             reader = csv.reader(f)
             for row in reader:
                 name = row[0]
