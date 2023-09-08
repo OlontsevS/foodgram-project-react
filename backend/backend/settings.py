@@ -7,10 +7,9 @@ SECRET_KEY = "4r^48**z=k)@ud2irx0lsk^@wapkxafbh(0l9*!s48l#x#_3iq"
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['maintenance17.ddns.net',
-                 '158.160.24.191', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["maintenance17.ddns.net", "158.160.24.191", "localhost", "127.0.0.1"]
 
-CSRF_TRUSTED_ORIGINS = ['https://*.maintenance17.ddns.net', 'https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ["https://*.maintenance17.ddns.net", "https://*.127.0.0.1"]
 CSRF_COOKIE_SECURE = False
 
 
@@ -42,18 +41,18 @@ MIDDLEWARE = [
 ]
 
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "collected_static")
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 CORS_URLS_REGEX = r"^/api/.*$"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ROOT_URLCONF = "backend.urls"
 
@@ -95,32 +94,29 @@ DJOSER = {
 
 
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
-       'USER': os.getenv('POSTGRES_USER', 'foodgram_user'),
-       'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'foodgram_password'),
-       'HOST': os.getenv('DB_HOST', 'db'),
-       'PORT': os.getenv('DB_PORT', 5432)
-   }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "foodgram"),
+        "USER": os.getenv("POSTGRES_USER", "foodgram_user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "foodgram_password"),
+        "HOST": os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("DB_PORT", 5432),
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth."
-                "password_validation.UserAttributeSimilarityValidator",
+        "password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth."
-                "password_validation.MinimumLengthValidator",
+        "NAME": "django.contrib.auth." "password_validation.MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth."
-                "password_validation.CommonPasswordValidator",
+        "NAME": "django.contrib.auth." "password_validation.CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth."
-                "password_validation.NumericPasswordValidator",
+        "NAME": "django.contrib.auth." "password_validation.NumericPasswordValidator",
     },
 ]
 
