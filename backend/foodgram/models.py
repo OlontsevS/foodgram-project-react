@@ -8,7 +8,10 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=200, verbose_name="Название ингридиента")
+    name = models.CharField(
+        max_length=200,
+        verbose_name="Название ингридиента"
+    )
     measurement_unit = models.CharField(max_length=200)
 
 
@@ -19,7 +22,11 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="recipes"
+    )
     name = models.CharField(max_length=200)
     image = models.ImageField("Label")
     text = models.TextField()
@@ -35,7 +42,10 @@ class Recipe(models.Model):
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name="recipes", verbose_name="Рецепт"
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name="recipes",
+        verbose_name="Рецепт"
     )
     ingredient = models.ForeignKey(
         Ingredient,
@@ -43,14 +53,21 @@ class RecipeIngredient(models.Model):
         related_name="ingredients",
         verbose_name="Ингредиент",
     )
-    amount = models.IntegerField("Количество", validators=[MinValueValidator(1)])
+    amount = models.IntegerField(
+        "Количество",
+        validators=[MinValueValidator(1)]
+    )
 
 
 class Favorite(models.Model):
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE, related_name="favorites"
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="favorites"
+    )
 
 
 class Cart(models.Model):
